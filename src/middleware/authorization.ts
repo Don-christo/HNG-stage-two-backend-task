@@ -28,11 +28,18 @@ export const auth = async (
     req.user = decoded;
 
     return next();
-  } catch (err) {
-    console.log('ERROR:', err);
+  } catch (error: any) {
+    if (error.name === "TokenExpiredError") {
+      return res.status(StatusCodes.UNAUTHORIZED).send({
+        status: "Error",
+        message: "Your session has expired. Please log in again.",
+      });
+    }
+
+    console.log("ERROR:", error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
       status: "Error",
-      message: err,
+      message: "An unexpected error occurred.",
     });
   }
 };

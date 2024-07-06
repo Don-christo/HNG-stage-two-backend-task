@@ -5,6 +5,9 @@ import cors from "cors";
 import logger from "morgan";
 import { db, ENV } from "./config";
 import { StatusCodes } from "http-status-codes";
+import authRoutes from "./routes/authRoutes";
+import userRoutes from "./routes/userRoutes";
+import organizationRoutes from "./routes/organizationRoutes";
 
 const app = express();
 const port = ENV.PORT || 3000;
@@ -42,7 +45,9 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-
+app.use("/auth", authRoutes);
+app.use("/api", userRoutes);
+app.use("/api", organizationRoutes);
 
 db.sync({
   // force:true

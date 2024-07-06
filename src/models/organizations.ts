@@ -6,6 +6,7 @@ import {
 } from "sequelize";
 import { db } from "../config";
 import Users from "./users";
+import UserOrganization from "./userOrganization";
 
 const TABLE_NAME = "Organizations";
 
@@ -13,24 +14,16 @@ class Organizations extends Model<
   InferAttributes<Organizations>,
   InferCreationAttributes<Organizations>
 > {
-  declare id: string;
-  declare userId: string;
+  declare orgId: string;
   declare name: string;
   declare description: string;
 }
 
 Organizations.init(
   {
-    id: {
+    orgId: {
       type: DataTypes.UUID,
       primaryKey: true,
-    },
-    userId: {
-      type: DataTypes.STRING,
-      references: {
-        model: Users,
-        key: "id",
-      },
     },
     name: {
       type: DataTypes.STRING,

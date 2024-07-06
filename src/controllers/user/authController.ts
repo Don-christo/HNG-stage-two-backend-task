@@ -1,16 +1,26 @@
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { v4 as uuidv4 } from "uuid";
-import { PasswordHarsher } from "../utilities/helpers";
-import Users from "../models/users";
+import { PasswordHarsher } from "../../utilities/helpers";
+import Users from "../../models/users";
 import { Op } from "sequelize";
 import _, { toLower } from "lodash";
-import Organizations from "../models/organization";
+import Organizations from "../../models/organizations";
 import * as jwt from "jsonwebtoken";
-import { ENV } from "../config";
-import { loginSchema, registerSchema } from "../utilities/validators";
-import { ACCESS_TOKEN, JWT_ACCESS_TOKEN_EXPIRATION_TIME } from "../constants";
+import { ENV } from "../../config";
+import { loginSchema, registerSchema } from "../../utilities/validators";
+import {
+  ACCESS_TOKEN,
+  JWT_ACCESS_TOKEN_EXPIRATION_TIME,
+} from "../../constants";
+import UserOrganization from "../../models/userOrganization";
 
+const generateToken = (user: any) => {
+  const payload = { userId: user.id, email: user.email };
+  return jwt.sign(payload, ENV.APP_SECRET as string, {
+    expiresIn: JWT_ACCESS_TOKEN_EXPIRATION_TIME,
+  });
+};
 export const registerUser = async (req: Request, res: Response) => {
   try {
     const userValidated = registerSchema.strict().safeParse(req.body);
@@ -40,27 +50,45 @@ export const registerUser = async (req: Request, res: Response) => {
         phone,
       });
 
+      const orgId = uuidv4();
       const orgName = `${firstName}'s Organisation`;
-      await Organizations.create({
-        id: uuidv4(),
-        userId: newUser.id,
+      const newOrganization = await Organizations.create({
+        orgId: orgId,
         name: orgName,
         description: "",
       });
 
+      await UserOrganization.create({
+        userId: newUser.id,
+        organizationId: newOrganization.orgId,
+      });
+
+      const token = generateToken(newUser);
+
       return res.status(StatusCodes.CREATED).json({
-        message: "User created successfully",
-        data: _.pick(newUser, ["id", "firstName", "lastName", "email"]),
+        status: "Success",
+        message: "Registration successful",
+        data: {
+          accessToken: token,
+          user: _.pick(newUser, [
+            "id",
+            "firstName",
+            "lastName",
+            "email",
+            "phone",
+          ]),
+        },
       });
     }
     return res.status(StatusCodes.CONFLICT).json({
       message: "User already exists",
     });
   } catch (error) {
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      status: "error",
+    console.log(error);
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      status: "Bad request",
       message: "Registration unsuccessful",
-      error,
+      statusCode: StatusCodes.BAD_REQUEST,
     });
   }
 };
@@ -88,11 +116,7 @@ export const loginUser = async (req: Request, res: Response) => {
       );
 
       if (confirmPassword) {
-        const payload = { id: confirmUser.id };
-
-        const accessToken = jwt.sign(payload, ENV.APP_SECRET as string, {
-          expiresIn: JWT_ACCESS_TOKEN_EXPIRATION_TIME,
-        });
+        const accessToken = generateToken(confirmUser);
 
         res.cookie(ACCESS_TOKEN, accessToken, {
           httpOnly: true,
@@ -101,9 +125,18 @@ export const loginUser = async (req: Request, res: Response) => {
         });
 
         return res.status(StatusCodes.OK).json({
-          message: "User logged in successfully",
-          data: _.pick(confirmUser.dataValues, ["id", "firstName", "lastName"]),
-          token: accessToken,
+          status: "success",
+          message: "Login successful",
+          data: {
+            accessToken,
+            user: _.pick(confirmUser.dataValues, [
+              "id",
+              "firstName",
+              "lastName",
+              "email",
+              "phone",
+            ]),
+          },
         });
       }
     }
@@ -111,10 +144,11 @@ export const loginUser = async (req: Request, res: Response) => {
       message: "Invalid credentials!",
     });
   } catch (error) {
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      status: "error",
-      message: "Login unsuccessful",
-      error,
+    console.log(error);
+    return res.status(StatusCodes.UNAUTHORIZED).json({
+      status: "Bad request",
+      message: "Authentication failed",
+      statusCode: StatusCodes.UNAUTHORIZED,
     });
   }
 };
