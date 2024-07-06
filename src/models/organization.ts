@@ -5,6 +5,7 @@ import {
   InferCreationAttributes,
 } from "sequelize";
 import { db } from "../config";
+import Users from "./users";
 
 const TABLE_NAME = "Organizations";
 
@@ -27,7 +28,7 @@ Organizations.init(
     userId: {
       type: DataTypes.STRING,
       references: {
-        model: "Users",
+        model: Users,
         key: "id",
       },
     },
