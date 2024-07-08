@@ -1,7 +1,8 @@
 import { Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { APP_SECRET } from '../config/env';
+import ENV from '../config/env';
 import { StatusCodes } from 'http-status-codes';
+import { JWT_EXPIRATION_STATUS_CODE, JWT_INVALID_STATUS_CODE } from '../constants';
 export const auth = async (
   req: JwtPayload,
   res: Response,
@@ -21,10 +22,10 @@ export const auth = async (
     if (!pin || pin === '') {
       return res.status(StatusCodes.FORBIDDEN).send({
         status: "Error",
-        message: "The pin can't be used",
+        message: `${JWT_INVALID_STATUS_CODE}. This pin can't be used`,
       });
     }
-    const decoded = jwt.verify(pin, `${APP_SECRET}`);
+    const decoded = jwt.verify(pin, ENV.APP_SECRET as string);
     req.user = decoded;
 
     return next();
@@ -32,7 +33,7 @@ export const auth = async (
     if (error.name === "TokenExpiredError") {
       return res.status(StatusCodes.UNAUTHORIZED).send({
         status: "Error",
-        message: "Your session has expired. Please log in again.",
+        message: `${JWT_EXPIRATION_STATUS_CODE}. Please, login again`,
       });
     }
 

@@ -15,7 +15,7 @@ import {
 } from "../../constants";
 import UserOrganization from "../../models/userOrganization";
 
-const generateToken = (user: any) => {
+export const generateToken = (user: any) => {
   const payload = { userId: user.id, email: user.email };
   return jwt.sign(payload, ENV.APP_SECRET as string, {
     expiresIn: JWT_ACCESS_TOKEN_EXPIRATION_TIME,
@@ -26,7 +26,9 @@ export const registerUser = async (req: Request, res: Response) => {
     const userValidated = registerSchema.strict().safeParse(req.body);
     if (!userValidated.success) {
       return res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({
-        message: userValidated.error.issues,
+        status: "error",
+        message: "Validation error",
+        error: userValidated.error.issues,
       });
     }
     const { firstName, lastName, email, password, phone } = userValidated.data;
@@ -81,6 +83,7 @@ export const registerUser = async (req: Request, res: Response) => {
       });
     }
     return res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({
+      status: "error",
       message: "User or phone already exists",
     });
   } catch (error) {

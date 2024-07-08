@@ -6,10 +6,10 @@ import { JwtPayload } from "jsonwebtoken";
 import UserOrganization from "../../models/userOrganization";
 import { createOrgSchema } from "../../utilities/validators";
 
-export const getOrganisations = async (req: JwtPayload, res: Response) => {
+export const getOrganizations = async (req: JwtPayload, res: Response) => {
   const userId = req.user.userId;
   try {
-    const organisations = await Organizations.findAll({
+    const organizations = await Organizations.findAll({
       include: {
         model: Users,
         where: { id: userId },
@@ -18,7 +18,7 @@ export const getOrganisations = async (req: JwtPayload, res: Response) => {
     res.status(StatusCodes.OK).json({
       status: "success",
       message: "Organisations retrieved successfully",
-      data: { organisations },
+      data: { organizations },
     });
   } catch (error) {
     console.log(error);
@@ -29,12 +29,12 @@ export const getOrganisations = async (req: JwtPayload, res: Response) => {
   }
 };
 
-export const getOrganisationById = async (req: JwtPayload, res: Response) => {
+export const getOrganizationById = async (req: JwtPayload, res: Response) => {
   const { orgId } = req.params;
   const userId = req.user.userId;
 
   try {
-    const organisation = await Organizations.findOne({
+    const organization = await Organizations.findOne({
       where: { orgId },
       include: {
         model: Users,
@@ -42,7 +42,7 @@ export const getOrganisationById = async (req: JwtPayload, res: Response) => {
       },
     });
 
-    if (!organisation) {
+    if (!organization) {
       return res.status(StatusCodes.NOT_FOUND).json({
         status: "error",
         message:
@@ -52,7 +52,7 @@ export const getOrganisationById = async (req: JwtPayload, res: Response) => {
     res.status(StatusCodes.OK).json({
       status: "success",
       message: "Organisation found",
-      data: organisation,
+      data: organization,
     });
   } catch (error) {
     console.log(error);
@@ -103,7 +103,7 @@ export const createOrganisation = async (req: JwtPayload, res: Response) => {
 
     res.status(StatusCodes.CREATED).json({
       status: "success",
-      message: "Organisation created successfully",
+      message: "Organization created successfully",
       data: newOrganization,
     });
   } catch (error) {

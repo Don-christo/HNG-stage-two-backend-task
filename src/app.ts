@@ -45,12 +45,12 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use("/auth", authRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/api", userRoutes);
 app.use("/api", organizationRoutes);
 
 db.sync({
-  // force:true
+  // force: true,
 })
   .then(() => {
     console.log("Database is connected");
@@ -69,18 +69,20 @@ app.use(function (err: HttpError, req: Request, res: Response) {
   res.locals.error = req.app.get("env") === "development" ? err : {};
   res.status(err.status || StatusCodes.INTERNAL_SERVER_ERROR);
   // render the error page
-    if (req.accepts("html")) {
-      res.render("error", (renderErr: any) => {
-        if (renderErr) {
-          res.json({
-            message: err.message,
-            error: req.app.get("env") === "development" ? err : {},
-          });
-        }
-      });
-    } 
+  if (req.accepts("html")) {
+    res.render("error", (renderErr: any) => {
+      if (renderErr) {
+        res.json({
+          message: err.message,
+          error: req.app.get("env") === "development" ? err : {},
+        });
+      }
+    });
+  }
 });
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
+export default app;
