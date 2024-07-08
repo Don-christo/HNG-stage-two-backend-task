@@ -80,7 +80,7 @@ export const registerUser = async (req: Request, res: Response) => {
         },
       });
     }
-    return res.status(StatusCodes.CONFLICT).json({
+    return res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({
       message: "User or phone already exists",
     });
   } catch (error) {
