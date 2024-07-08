@@ -18,3 +18,8 @@ export const loginSchema = z.object({
     .min(4, passwordUtils.error)
     .regex(passwordUtils.regex, passwordUtils.error),
 });
+
+export const createOrgSchema = z.object({
+  name: z.string().min(2, "name is required"),
+  description: z.string()
+})

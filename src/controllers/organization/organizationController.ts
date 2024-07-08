@@ -1,10 +1,10 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { v4 as uuidv4 } from "uuid";
-import Organizations from "../../models/organizations";
-import Users from "../../models/users";
+import { Users, Organizations } from "../../models";
 import { JwtPayload } from "jsonwebtoken";
 import UserOrganization from "../../models/userOrganization";
+import { createOrgSchema } from "../../utilities/validators";
 
 export const getOrganisations = async (req: JwtPayload, res: Response) => {
   const userId = req.user.userId;
@@ -31,15 +31,22 @@ export const getOrganisations = async (req: JwtPayload, res: Response) => {
 
 export const getOrganisationById = async (req: JwtPayload, res: Response) => {
   const { orgId } = req.params;
+  const userId = req.user.userId;
+
   try {
-      const organisation = await Organizations.findOne({
-        where: { orgId },
-        include: Users,
-      });
+    const organisation = await Organizations.findOne({
+      where: { orgId },
+      include: {
+        model: Users,
+        where: { id: userId },
+      },
+    });
+
     if (!organisation) {
       return res.status(StatusCodes.NOT_FOUND).json({
         status: "error",
-        message: "Organisation not found",
+        message:
+          "Organisation not found or you do not have access to this organization",
       });
     }
     res.status(StatusCodes.OK).json({
@@ -58,19 +65,42 @@ export const getOrganisationById = async (req: JwtPayload, res: Response) => {
 
 export const createOrganisation = async (req: JwtPayload, res: Response) => {
   const userId = req.user.userId;
-  const { name, description } = req.body;
+  // const { description, ...rest} = req.body;
+  
   try {
-      const orgId = uuidv4();
-      const newOrganization = await Organizations.create({
-        orgId,
-        name,
-        description,
+    const orgValidated = createOrgSchema.strict().safeParse(req.body);
+    if (!orgValidated.success) {
+      return res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({
+        status: "error",
+        message: orgValidated.error.issues,
       });
+    }
 
-        await UserOrganization.create({
-          userId,
-          organizationId: newOrganization.orgId,
-        });
+    const { name, description } = orgValidated.data;
+
+    const existingOrganization = await Organizations.findOne({
+      where: { name },
+    });
+
+    if (existingOrganization) {
+      return res.status(StatusCodes.CONFLICT).json({
+        status: "error",
+        message: "Organisation already exists",
+      });
+    }
+
+    const orgId = uuidv4();
+    const newOrganization = await Organizations.create({
+      orgId,
+      name,
+      description,
+    });
+
+    await UserOrganization.create({
+      userId,
+      organizationId: newOrganization.orgId,
+    });
+
     res.status(StatusCodes.CREATED).json({
       status: "success",
       message: "Organisation created successfully",
@@ -86,7 +116,7 @@ export const createOrganisation = async (req: JwtPayload, res: Response) => {
   }
 };
 
-export const addUserToOrganization = async (req: Request, res: Response) => {
+export const addUserToOrganization = async (req: JwtPayload, res: Response) => {
   const { userId } = req.body;
   const { orgId } = req.params;
 
@@ -101,7 +131,20 @@ export const addUserToOrganization = async (req: Request, res: Response) => {
       });
     }
 
-    
+    const existingMembership = await UserOrganization.findOne({
+      where: {
+        userId: user.id,
+        organizationId: organization.orgId,
+      },
+    });
+
+    if (existingMembership) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        status: "error",
+        message: "User is already a member of the organization",
+      });
+    }
+
     await UserOrganization.create({
       userId: user.id,
       organizationId: organization.orgId,

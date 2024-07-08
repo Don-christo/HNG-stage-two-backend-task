@@ -11,14 +11,6 @@ export const passwordUtils = {
     : "Password: Min 4 characters, with a lowercase and a number.",
 };
 
-export function validatePassword(password: string): boolean {
-  return passwordUtils.regex.test(password);
-}
-
-export function getPasswordErrorMessage(): string {
-  return passwordUtils.error;
-}
-
 export class PasswordHarsher {
   static async compare(password: string, hash: string) {
     return await bcrypt.compare(password, hash);

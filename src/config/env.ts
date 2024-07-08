@@ -1,5 +1,4 @@
 import dotenv from 'dotenv';
-import path from "path"
 
 // Check condition to determine which environment to use
 const isProduction = process.env.NODE_ENV === 'production';

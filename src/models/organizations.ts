@@ -5,8 +5,6 @@ import {
   InferCreationAttributes,
 } from "sequelize";
 import { db } from "../config";
-import Users from "./users";
-import UserOrganization from "./userOrganization";
 
 const TABLE_NAME = "Organizations";
 

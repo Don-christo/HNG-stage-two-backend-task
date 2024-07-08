@@ -81,7 +81,7 @@ export const registerUser = async (req: Request, res: Response) => {
       });
     }
     return res.status(StatusCodes.CONFLICT).json({
-      message: "User already exists",
+      message: "User or phone already exists",
     });
   } catch (error) {
     console.log(error);

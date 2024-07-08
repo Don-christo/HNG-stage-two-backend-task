@@ -81,40 +81,6 @@ app.use(function (err: HttpError, req: Request, res: Response) {
     } 
 });
 
-// Start the server
-const server = app.listen(port, () => {
+app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
-
-// Graceful shutdown
-const shutdown = () => {
-  console.log("Received kill signal, shutting down gracefully.");
-
-  server.close((err) => {
-    if (err) {
-      console.error("Error closing the server: ", err);
-      process.exit(1);
-    }
-
-    console.log("Closed out remaining connections.");
-    db.close()
-      .then(() => {
-        console.log("Database connection closed.");
-        process.exit(0);
-      })
-      .catch((dbErr) => {
-        console.error("Error closing the database connection: ", dbErr);
-        process.exit(1);
-      });
-  });
-
-  // Forcefully shut down after 10 seconds if not gracefully shut down
-  setTimeout(() => {
-    console.error("Could not close connections in time, forcefully shutting down");
-    process.exit(1);
-  }, 10000);
-};
-
-// Handle termination signals
-process.on("SIGTERM", shutdown);
-process.on("SIGINT", shutdown);
