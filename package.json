@@ -8,8 +8,7 @@
     "prod": "cross-env NODE_ENV=production node ./dist/app.js",
     "build": "tsc",
     "build-watch": "tsc -w",
-    "test": "jest",
-    "vercel-build": "echo hello"
+    "test": "jest"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
