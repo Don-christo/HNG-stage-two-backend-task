@@ -7,7 +7,6 @@
     "dev": "cross-env NODE_ENV=development nodemon ./dist/app.js",
     "prod": "cross-env NODE_ENV=production node ./dist/app.js",
     "build": "tsc",
-    "vercel-build": "npm run build",
     "build-watch": "tsc -w",
     "test": "jest"
   },
