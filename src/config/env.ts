@@ -1,10 +1,10 @@
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 
 // Check condition to determine which environment to use
-const isProduction = process.env.NODE_ENV === 'production';
+const isProduction = process.env.NODE_ENV === "production";
 
 // Specify the path to the .env file
-const envFilePath = isProduction ? '.env.production' : '.env.development';
+const envFilePath = isProduction ? ".env.production" : ".env.development";
 console.log(`running in ${process.env.NODE_ENV} mode`);
 
 // Load the environment variables from the specified file
