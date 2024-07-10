@@ -12,26 +12,26 @@ import organizationRoutes from "./routes/organizationRoutes";
 const app = express();
 const port = ENV.PORT || 3000;
 
-const allowedOrigins: Array<string> = [
-  ENV.IS_PROD ? "" : `http://localhost:${port}`,
-].filter(Boolean);
+// const allowedOrigins: Array<string> = [
+//   ENV.IS_PROD ? "" : `http://localhost:${port}`,
+// ].filter(Boolean);
 
-const corsOptions: cors.CorsOptions = {
-  origin: (origin, callback) => {
-    if (
-      (typeof origin === "string" && allowedOrigins.includes(origin)) ||
-      !origin
-    ) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-  credentials: true,
-};
+// const corsOptions: cors.CorsOptions = {
+//   origin: (origin, callback) => {
+//     if (
+//       (typeof origin === "string" && allowedOrigins.includes(origin)) ||
+//       !origin
+//     ) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error("Not allowed by CORS"));
+//     }
+//   },
+//   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+//   credentials: true,
+// };
 
-app.use(cors(corsOptions));
+app.use(cors());
 app.use((_req: Request, res: Response, next: NextFunction) => {
   res.header(
     "Access-Control-Allow-Headers",
@@ -81,8 +81,19 @@ app.use(function (err: HttpError, req: Request, res: Response) {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+if (process.env.NODE_ENV !== "production") {
+  const server = () => {
+    try {
+      app.listen(port, () => {
+        console.log(`Server is running on port ${port}`);
+      });
+    } catch (error) {
+      console.error(error);
+      console.log(error);
+    }
+  };
+
+  server();
+}
 
 module.exports = app;
