@@ -8,8 +8,8 @@
   ],
   "routes": [
     {
-      "source": "/api/(.*)",
-      "destination": "/dist/app.js"
+      "src": "/api/(.*)",
+      "dest": "/dist/app.js"
     }
   ]
 }

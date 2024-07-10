@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 const isProduction = process.env.NODE_ENV === "production";
 
 // Specify the path to the .env file
-const envFilePath = isProduction ? ".env" : ".env.development";
+const envFilePath = isProduction ? ".env.production" : ".env.development";
 console.log(`running in ${process.env.NODE_ENV} mode`);
 
 // Load the environment variables from the specified file
