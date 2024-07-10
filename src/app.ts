@@ -4,7 +4,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import logger from "morgan";
 import { db, ENV } from "./config";
-import { StatusCodes } from "http-status-codes";
+// import { StatusCodes } from "http-status-codes";
 import authRoutes from "./routes/authRoutes";
 import userRoutes from "./routes/userRoutes";
 import organizationRoutes from "./routes/organizationRoutes";
@@ -63,23 +63,23 @@ app.use(function (_req: Request, _res: Response, next: NextFunction) {
   next(createError(404));
 });
 
-app.use(function (err: HttpError, req: Request, res: Response) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get("env") === "development" ? err : {};
-  res.status(err.status || StatusCodes.INTERNAL_SERVER_ERROR);
-  // render the error page
-  if (req.accepts("html")) {
-    res.render("error", (renderErr: any) => {
-      if (renderErr) {
-        res.json({
-          message: err.message,
-          error: req.app.get("env") === "development" ? err : {},
-        });
-      }
-    });
-  }
-});
+// app.use(function (err: HttpError, req: Request, res: Response) {
+//   // set locals, only providing error in development
+//   res.locals.message = err.message;
+//   res.locals.error = req.app.get("env") === "development" ? err : {};
+//   res.status(err.status || StatusCodes.INTERNAL_SERVER_ERROR);
+//   // render the error page
+//   if (req.accepts("html")) {
+//     res.render("error", (renderErr: any) => {
+//       if (renderErr) {
+//         res.json({
+//           message: err.message,
+//           error: req.app.get("env") === "development" ? err : {},
+//         });
+//       }
+//     });
+//   }
+// });
 
 if (process.env.NODE_ENV !== "production") {
   const server = () => {
