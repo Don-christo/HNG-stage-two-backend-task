@@ -1,3 +1,4 @@
+// import dotenv from "dotenv";
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { v4 as uuidv4 } from "uuid";
@@ -7,7 +8,7 @@ import { Op } from "sequelize";
 import _, { toLower } from "lodash";
 import Organizations from "../../models/organizations";
 import * as jwt from "jsonwebtoken";
-import { ENV } from "../../config";
+// import { ENV } from "../../config";
 import { loginSchema, registerSchema } from "../../utilities/validators";
 import {
   ACCESS_TOKEN,
@@ -17,7 +18,7 @@ import UserOrganization from "../../models/userOrganization";
 
 export const generateToken = (user: any) => {
   const payload = { userId: user.id, email: user.email };
-  return jwt.sign(payload, ENV.APP_SECRET as string, {
+  return jwt.sign(payload, process.env.APP_SECRET as string, {
     expiresIn: JWT_ACCESS_TOKEN_EXPIRATION_TIME,
   });
 };
@@ -124,7 +125,7 @@ export const loginUser = async (req: Request, res: Response) => {
         res.cookie(ACCESS_TOKEN, accessToken, {
           httpOnly: true,
           sameSite: "strict",
-          secure: ENV.IS_PROD,
+          secure: true,
         });
 
         return res.status(StatusCodes.OK).json({
