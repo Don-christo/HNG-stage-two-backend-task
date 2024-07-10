@@ -3,5 +3,5 @@
 * Start the Project:
 
 - yarn install
-- yarn dev (development)
-- yarn prod (production)
+- yarn dev (in development)
+- yarn prod (in production)
