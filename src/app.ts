@@ -1,16 +1,17 @@
+require("dotenv").config();
 import express, { Request, Response, NextFunction } from "express";
 import createError, { HttpError } from "http-errors";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import logger from "morgan";
-import { db, ENV } from "./config";
+import { db } from "./config";
 // import { StatusCodes } from "http-status-codes";
 import authRoutes from "./routes/authRoutes";
 import userRoutes from "./routes/userRoutes";
 import organizationRoutes from "./routes/organizationRoutes";
 
 const app = express();
-const port = ENV.PORT || 3000;
+const port = process.env.PORT || 3000;
 
 // const allowedOrigins: Array<string> = [
 //   ENV.IS_PROD ? "" : `http://localhost:${port}`,
@@ -89,7 +90,7 @@ if (process.env.NODE_ENV !== "production") {
       });
     } catch (error) {
       console.error(error);
-      console.log(error);
+      console.log("Error", error);
     }
   };
 
