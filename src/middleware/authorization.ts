@@ -1,6 +1,6 @@
 import { Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import ENV from '../config/env';
+// import ENV from '../config/env';
 import { StatusCodes } from 'http-status-codes';
 import { JWT_EXPIRATION_STATUS_CODE, JWT_INVALID_STATUS_CODE } from '../constants';
 export const auth = async (
@@ -25,7 +25,7 @@ export const auth = async (
         message: `${JWT_INVALID_STATUS_CODE}. This pin can't be used`,
       });
     }
-    const decoded = jwt.verify(pin, ENV.APP_SECRET as string);
+    const decoded = jwt.verify(pin, process.env.APP_SECRET as string);
     req.user = decoded;
 
     return next();

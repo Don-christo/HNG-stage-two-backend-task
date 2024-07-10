@@ -13,4 +13,4 @@ export const db = new Sequelize(process.env.DB_NAME!, process.env.DB_USERNAME!, 
 });
 
 
-console.log(db)
+console.log("This is the DB", db)
