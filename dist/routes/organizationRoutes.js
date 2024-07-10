@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const organizationController_1 = require("../controllers/organization/organizationController");
+const authorization_1 = require("../middleware/authorization");
+const router = (0, express_1.Router)();
+router.get("/organisations", authorization_1.auth, organizationController_1.getOrganizations);
+router.get("/organisations/:orgId", authorization_1.auth, organizationController_1.getOrganizationById);
+router.post("/organisations", authorization_1.auth, organizationController_1.createOrganisation);
+router.post("/organisations/:orgId/users", authorization_1.auth, organizationController_1.addUserToOrganization);
+exports.default = router;
