@@ -23,8 +23,6 @@ export const {
   DB_PASSWORD,
   DB_PORT,
   APP_SECRET,
-  JWT_SECRET,
-  JWT_REFRESH_SECRET,
 } = process.env;
 
 const ENV = {
@@ -35,8 +33,6 @@ const ENV = {
   DB_PASSWORD,
   DB_PORT: Number(DB_PORT),
   APP_SECRET,
-  JWT_SECRET,
-  JWT_REFRESH_SECRET,
   IS_PROD: isProduction,
 };
 
