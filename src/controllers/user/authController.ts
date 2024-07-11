@@ -16,7 +16,7 @@ import {
 import UserOrganization from "../../models/userOrganization";
 
 export const generateToken = (user: any) => {
-  const payload = { userId: user.id, email: user.email };
+  const payload = { userId: user.userId, email: user.email };
   return jwt.sign(payload, ENV.APP_SECRET as string, {
     expiresIn: JWT_ACCESS_TOKEN_EXPIRATION_TIME,
   });

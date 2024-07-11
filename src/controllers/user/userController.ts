@@ -5,12 +5,12 @@ import { JwtPayload } from "jsonwebtoken";
 import { UserOrganization } from "../../models";
 
 export const getUser = async (req: JwtPayload, res: Response) => {
-  const { id } = req.params;
+  const { userId } = req.params;
   const loggedInUserId = req.user.userId;
 
   try {
-    if (id === loggedInUserId) {
-      const user = await Users.findOne({ where: { id } });
+    if (userId === loggedInUserId) {
+      const user = await Users.findOne({ where: { userId } });
       if (!user) {
         return res.status(StatusCodes.NOT_FOUND).json({
           status: "error",
@@ -21,7 +21,7 @@ export const getUser = async (req: JwtPayload, res: Response) => {
         status: "success",
         message: "User found",
         data: {
-          userId: user.id,
+          userId: user.userId,
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email,
@@ -36,7 +36,7 @@ export const getUser = async (req: JwtPayload, res: Response) => {
       (userOrganization) => userOrganization.organizationId
     );
     const user = await Users.findOne({
-      where: { id },
+      where: { userId },
       include: {
         model: UserOrganization,
         where: { organizationId: userOrgsId },
@@ -52,7 +52,7 @@ export const getUser = async (req: JwtPayload, res: Response) => {
       status: "success",
       message: "User found",
       data: {
-        userId: user.id,
+        userId: user.userId,
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,

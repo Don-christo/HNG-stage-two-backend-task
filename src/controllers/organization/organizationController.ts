@@ -133,7 +133,7 @@ export const addUserToOrganization = async (req: JwtPayload, res: Response) => {
 
     const existingMembership = await UserOrganization.findOne({
       where: {
-        userId: user.id,
+        userId: user.userId,
         organizationId: organization.orgId,
       },
     });
@@ -146,7 +146,7 @@ export const addUserToOrganization = async (req: JwtPayload, res: Response) => {
     }
 
     await UserOrganization.create({
-      userId: user.id,
+      userId: user.userId,
       organizationId: organization.orgId,
     });
 
