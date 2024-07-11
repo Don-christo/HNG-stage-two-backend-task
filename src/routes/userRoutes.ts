@@ -4,6 +4,6 @@ import { auth } from "../middleware/authorization";
 
 const router = Router();
 
-router.get("/users/:id", auth, getUser);
+router.get("/users/:userId", auth, getUser);
 
 export default router;
