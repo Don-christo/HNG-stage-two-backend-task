@@ -41,10 +41,10 @@ export const registerUser = async (req: Request, res: Response) => {
 
     if (!existingUser) {
       const hashedPassword = await PasswordHarsher.hash(password);
-      const id = uuidv4();
+      const userId = uuidv4();
 
       const newUser = await Users.create({
-        id,
+        userId,
         firstName: toLower(firstName),
         lastName: toLower(lastName),
         email: newEmail,
@@ -61,19 +61,19 @@ export const registerUser = async (req: Request, res: Response) => {
       });
 
       await UserOrganization.create({
-        userId: newUser.id,
+        userId: newUser.userId,
         organizationId: newOrganization.orgId,
       });
 
       const token = generateToken(newUser);
 
       return res.status(StatusCodes.CREATED).json({
-        status: "Success",
+        status: "success",
         message: "Registration successful",
         data: {
           accessToken: token,
           user: _.pick(newUser, [
-            "id",
+            "userId",
             "firstName",
             "lastName",
             "email",
@@ -101,7 +101,7 @@ export const loginUser = async (req: Request, res: Response) => {
     const validationResult = loginSchema.strict().safeParse(req.body);
 
     if (!validationResult.success) {
-      return res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({
+      return res.status(StatusCodes.UNAUTHORIZED).json({
         message: validationResult.error.issues,
       });
     }
@@ -133,7 +133,7 @@ export const loginUser = async (req: Request, res: Response) => {
           data: {
             accessToken,
             user: _.pick(confirmUser.dataValues, [
-              "id",
+              "userId",
               "firstName",
               "lastName",
               "email",

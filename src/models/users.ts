@@ -12,7 +12,7 @@ class Users extends Model<
   InferAttributes<Users>,
   InferCreationAttributes<Users>
 > {
-  declare id: string;
+  declare userId: string;
   declare firstName: string;
   declare lastName: string;
   declare email: string;
@@ -22,7 +22,7 @@ class Users extends Model<
 
 Users.init(
   {
-    id: {
+    userId: {
       type: DataTypes.UUID,
       primaryKey: true,
     },
