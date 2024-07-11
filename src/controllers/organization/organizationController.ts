@@ -12,7 +12,7 @@ export const getOrganizations = async (req: JwtPayload, res: Response) => {
     const organizations = await Organizations.findAll({
       include: {
         model: Users,
-        where: { id: userId },
+        where: { userId },
       },
     });
     res.status(StatusCodes.OK).json({
@@ -38,7 +38,7 @@ export const getOrganizationById = async (req: JwtPayload, res: Response) => {
       where: { orgId },
       include: {
         model: Users,
-        where: { id: userId },
+        where: { userId },
       },
     });
 

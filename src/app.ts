@@ -50,7 +50,7 @@ app.use("/api", userRoutes);
 app.use("/api", organizationRoutes);
 
 db.sync({
-  force: true,
+  // force: true,
 })
   .then(() => {
     console.log("Database is connected");
