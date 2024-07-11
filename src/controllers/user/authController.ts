@@ -101,7 +101,7 @@ export const loginUser = async (req: Request, res: Response) => {
     const validationResult = loginSchema.strict().safeParse(req.body);
 
     if (!validationResult.success) {
-      return res.status(StatusCodes.UNAUTHORIZED).json({
+      return res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({
         message: validationResult.error.issues,
       });
     }
@@ -144,6 +144,7 @@ export const loginUser = async (req: Request, res: Response) => {
       }
     }
     return res.status(StatusCodes.UNAUTHORIZED).json({
+      error: "Bad request",
       message: "Invalid credentials!",
     });
   } catch (error) {
